@@ -1,11 +1,19 @@
-import { Card, CardBody, CardHeader, Input } from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Input, Avatar } from "@nextui-org/react";
 
 const ChatCard = () => {
     return (
         <>
-            <Card>
+            <Card shadow="sm" className="overflow-y-hidden">
                 <CardBody>
-                    Username
+                    <div className="flex flex-row gap-4">
+                        <Avatar 
+                            name="friend"
+                            size="lg"
+                        />
+                        <div>
+                            Chat name
+                        </div>
+                    </div>
                 </CardBody>
             </Card>
         </>

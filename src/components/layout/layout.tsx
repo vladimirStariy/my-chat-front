@@ -3,18 +3,14 @@ import NavigationBar from "./navbar/navbar";
 import AppRouter from "./router/app.router";
 
 import { NextUIProvider } from "@nextui-org/react";
-import Sidebar from "./sidebar/sidebar";
 
 const Layout = () => {
     const navigate = useNavigate();
     return (
-        <NextUIProvider navigate={navigate} className="w-full flex flex-col gap-4 items-center">
-            <NavigationBar />
-            <div className="w-full max-w-5xl flex flex-row gap-4 mt-8">
-                <div className="max-w-xs w-full">
-                    <Sidebar />
-                </div>
-                <div className="w-full">
+        <NextUIProvider navigate={navigate} className="flex w-full h-[100vh]">
+            <div className="w-full h-screen flex flex-col items-center">
+                <NavigationBar />
+                <div className="w-full h-full pt-8 pb-8 max-w-5xl flex gap-4 relative">
                     <AppRouter />
                 </div>
             </div>

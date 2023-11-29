@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
+import { Avatar, Button, Card, CardBody, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
 import { DotsIcon } from "../../../icons/icons";
 
 const FriendsCard = () => {
@@ -6,7 +6,7 @@ const FriendsCard = () => {
         <>
         <Card shadow='none'>
             <CardBody className="p-0">
-                <div className="flex flex-row justify-between">
+                <div className="flex flex-row items-center justify-between">
                     <div className="flex flex-row gap-4 items-center">
                         <Avatar 
                             name="friend"
@@ -17,9 +17,22 @@ const FriendsCard = () => {
                             <h5 className="text-small tracking-tight text-default-400">@tag</h5>
                         </div>
                     </div>
-                    <Button className="p-0 w-8" variant="light">
-                        <DotsIcon />
-                    </Button>
+                    <Dropdown>
+                        <DropdownTrigger>
+                            <Button className="p-0 min-w-unit-0" variant="light">
+                                <DotsIcon />
+                            </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu aria-label="Static Actions">
+                            <DropdownItem key="new">New file</DropdownItem>
+                            <DropdownItem key="copy">Copy link</DropdownItem>
+                            <DropdownItem key="edit">Edit file</DropdownItem>
+                            <DropdownItem key="delete" className="text-danger" color="danger">
+                                Delete file
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                    
                 </div>
             </CardBody>
         </Card>

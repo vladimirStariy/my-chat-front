@@ -15,8 +15,8 @@ const NavigationBar = () => {
         setIsMenuOpen(false)
     }
 
-    return <div className="w-full mt-20">
-        <Navbar onMenuOpenChange={setIsMenuOpen} isBordered maxWidth={"lg"} className="md:py-4 px-0 fixed">
+    return <div className="w-full">
+        <Navbar onMenuOpenChange={setIsMenuOpen} isBordered maxWidth={"lg"} className="md:py-4 px-0">
             <NavbarMenuToggle
                 aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                 className="lg:hidden"

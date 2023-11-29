@@ -5,15 +5,28 @@ const FriendsTab = () => {
     return (
         <>
             <div className="flex flex-col gap-4">
-                <Input 
-                    variant="bordered"
-                    placeholder="Search..."
-
-                />
-                <FriendsCard />
-                <FriendsCard />
-                <FriendsCard />
-                <FriendsCard />
+                <div className="flex flex-col gap-4 overflow-y-auto">
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                    <FriendsCard />
+                </div>
             </div>
         </>
     );
