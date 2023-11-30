@@ -88,8 +88,8 @@ const ChatScreen: FC<ChatScreen> = (props) => {
                                     />
                                 </>
                             ))}
-                            <div ref={messagesEndRef} />
                         </div>
+                        <div ref={messagesEndRef} />
                     </div>
                     <form onSubmit={handleMessage} className="w-full px-8 py-4 border-t-1 absolute bottom-0">
                         <div className="flex gap-4">
