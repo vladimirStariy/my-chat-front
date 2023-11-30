@@ -1,16 +1,18 @@
 import { Route, Routes } from 'react-router-dom'
 import MainScreen from '../../main-screen/main.screen';
 import AuthScreen from '../../auth/auth.screen';
-import UsersScreen from '../../user-screens/admin-screen/users.screen';
+import NavigationBar from '../navbar/navbar';
 
 const AppRouter = () => {
     return (
         <Routes>
             <Route path='/auth' element={<AuthScreen />} />
-                    
-            <Route path='/users' element={<UsersScreen />} />
 
-            <Route path='/' element={<MainScreen />} />
+            <Route path='/' element={<div className='w-full h-full pt-4 pb-4 max-w-5xl flex flex-col gap-4 relative'>
+                    <NavigationBar />
+                    <MainScreen />
+                </div>
+            } />
         </Routes>
     )
 }

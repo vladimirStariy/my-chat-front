@@ -16,13 +16,20 @@ const NavigationBar = () => {
     }
 
     return <div className="w-full">
-        <Navbar onMenuOpenChange={setIsMenuOpen} isBordered maxWidth={"lg"} className="md:py-4 px-0">
+        <Navbar 
+            onMenuOpenChange={setIsMenuOpen} 
+            maxWidth={"lg"} 
+            classNames={{
+                wrapper: "px-0"
+            }}
+            className="md:py-4 px-0 max-h-16" 
+        >
             <NavbarMenuToggle
                 aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                 className="lg:hidden"
             />
-            <NavbarBrand>
-                <Link to='/' className="font-bold text-xl">MY CHAT</Link>
+            <NavbarBrand className="max-w-xs w-full">
+                <Link to='/' className="font-bold text-xl">SIMPLE CHATS</Link>
             </NavbarBrand>
             <NavbarContent className="hidden md:flex gap-4" justify="end">
                 {auth ? <>
@@ -30,17 +37,16 @@ const NavigationBar = () => {
                         <DropdownTrigger>
                             <Avatar
                                 name="user"
-                                isBordered
                                 as="button"
                                 className="transition-transform"
                             />
                         </DropdownTrigger>
                         <DropdownMenu aria-label="Profile Actions" variant="flat">                       
                             <DropdownItem key="my_collections">
-                                <Link to='/my-collections'>{t("myCollections")}</Link>
+                                <Link to='/'>PROFILE</Link>
                             </DropdownItem>
                             <DropdownItem key="logout" color="danger">
-                                {t("logout")}
+                                LOG OUT
                             </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>

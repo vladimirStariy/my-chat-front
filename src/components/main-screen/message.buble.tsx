@@ -9,11 +9,23 @@ interface MessageBubbleProps {
 const MessageBubble: FC<MessageBubbleProps> = (props) => {
     return (
         <>
-            <Chip
-                color={props.isMine ? 'primary' : 'secondary'}
-            >
-                Test message
-            </Chip>
+            <div className={`
+                flex flex-col
+                w-full 
+                h-full
+                ${props.isMine ? 'items-end' : 'items-start'}
+            `}>
+                <div
+                    className={`
+                    max-h-full max-w-sm 
+                    block break-normal px-4 py-2
+                    ${props.isMine ? 'bg-cyan-500' : 'bg-zinc-300'}
+                    ${props.isMine ? 'text-white' : ''}
+                    rounded-3xl`}
+                >
+                    {props.text}
+                </div>
+            </div>
         </>
     );
 }

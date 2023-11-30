@@ -6,7 +6,7 @@ const Sidebar = () => {
     return (
         <>
             <Card className="w-full overflow-y-auto absolute top-0 bottom-0 pt-4">
-                <CardBody className="px-0 overflow-y-auto relative">
+                <CardBody className="px-0 overflow-y-auto bg-white relative">
                     <Tabs 
                         size='lg'
                         variant="underlined" 
