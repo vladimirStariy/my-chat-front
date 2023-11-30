@@ -29,7 +29,7 @@ const ChatScreen: FC<ChatScreen> = (props) => {
     };
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
 
     useEffect(() => {
@@ -74,8 +74,8 @@ const ChatScreen: FC<ChatScreen> = (props) => {
                             />
                         </div>
                     </div>
-                    <div className="w-full max-h-full overflow-y-auto absolute bottom-0 top-0 mt-[3.3rem] mb-20">
-                        <div className="px-8 pt-4 pb-4 w-full max-h-full flex flex-col gap-2 pb-4">
+                    <div className="w-full max-h-full pb-4 overflow-y-auto absolute bottom-0 top-0 mt-[3.3rem] mb-20">
+                        <div className="px-8 pt-4  w-full max-h-full flex flex-col gap-2 pb-4">
                             <MessageBubble
                                 isMine={true}
                                 text="Hello how a you?"
@@ -89,7 +89,7 @@ const ChatScreen: FC<ChatScreen> = (props) => {
                                 </>
                             ))}
                         </div>
-                        <div ref={messagesEndRef} />
+                        <div className="" ref={messagesEndRef} />
                     </div>
                     <form onSubmit={handleMessage} className="w-full px-8 py-4 border-t-1 absolute bottom-0">
                         <div className="flex gap-4">
