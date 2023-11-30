@@ -32,7 +32,7 @@ const ChatScreen: FC<ChatScreen> = (props) => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
 
-    useCallback(() => {
+    useEffect(() => {
         scrollToBottom();
     }, [messages])
 
