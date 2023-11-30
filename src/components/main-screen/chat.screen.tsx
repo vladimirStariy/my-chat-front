@@ -1,6 +1,6 @@
 import { Avatar, Button, Card, CardBody, Input } from "@nextui-org/react";
 import MessageBubble from "./message.buble";
-import { FC, FormEvent, useEffect, useState } from "react";
+import { FC, FormEvent, useEffect, useRef, useState } from "react";
 import { Socket, io } from "socket.io-client";
 
 interface ChatScreen {
@@ -14,6 +14,8 @@ const ChatScreen: FC<ChatScreen> = (props) => {
     const [messages, setMessages] = useState<string[]>([]); 
     const [messageInputValue, setMessageInputValue] = useState<string>('')
 
+    const inputRef = useRef<HTMLInputElement>(null)
+
     const handleChangeValue = (text: string) => {
         setMessageInputValue(text)
     }
@@ -22,6 +24,7 @@ const ChatScreen: FC<ChatScreen> = (props) => {
         e.preventDefault();
         await socket.emit('messageToServer', {room: 'room 1', text: messageInputValue})
         setMessageInputValue('');
+        inputRef.current?.focus()
     };
 
     useEffect(() => {
@@ -81,9 +84,11 @@ const ChatScreen: FC<ChatScreen> = (props) => {
                     <form onSubmit={handleMessage} className="w-full px-8 py-4 border-t-1 absolute bottom-0">
                         <div className="flex gap-4">
                             <Input 
+                                ref={inputRef}
                                 size='sm' 
                                 variant='bordered'
                                 placeholder='Write your message...'
+                                autoFocus
                                 value={messageInputValue}
                                 onChange={(e) => handleChangeValue(e.target.value)}
                             />
