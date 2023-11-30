@@ -1,6 +1,6 @@
 import { Avatar, Button, Card, CardBody, Input } from "@nextui-org/react";
 import MessageBubble from "./message.buble";
-import { FC, FormEvent, useEffect, useRef, useState } from "react";
+import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Socket, io } from "socket.io-client";
 
 interface ChatScreen {
@@ -15,6 +15,7 @@ const ChatScreen: FC<ChatScreen> = (props) => {
     const [messageInputValue, setMessageInputValue] = useState<string>('')
 
     const inputRef = useRef<HTMLInputElement>(null)
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const handleChangeValue = (text: string) => {
         setMessageInputValue(text)
@@ -26,6 +27,14 @@ const ChatScreen: FC<ChatScreen> = (props) => {
         setMessageInputValue('');
         inputRef.current?.focus()
     };
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+
+    useCallback(() => {
+        scrollToBottom();
+    }, [messages])
 
     useEffect(() => {
         if(socket) {
@@ -66,7 +75,7 @@ const ChatScreen: FC<ChatScreen> = (props) => {
                         </div>
                     </div>
                     <div className="w-full max-h-full overflow-y-auto absolute bottom-0 top-0 mt-[3.3rem] mb-20">
-                        <div className="px-8 pt-4 w-full max-h-full flex flex-col gap-2 pb-4 overflow-y-auto">
+                        <div ref={messagesEndRef} className="px-8 pt-4 w-full max-h-full flex flex-col gap-2 pb-4 overflow-y-auto">
                             <MessageBubble
                                 isMine={true}
                                 text="Hello how a you?"
