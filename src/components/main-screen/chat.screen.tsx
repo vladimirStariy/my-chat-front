@@ -26,11 +26,10 @@ const ChatScreen: FC<ChatScreen> = (props) => {
         await socket.emit('messageToServer', {room: 'room 1', text: messageInputValue})
         setMessageInputValue('');
         inputRef.current?.focus()
-        scrollToBottom();
     };
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
     }
 
     useEffect(() => {
