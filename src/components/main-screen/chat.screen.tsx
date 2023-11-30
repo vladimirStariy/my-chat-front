@@ -1,6 +1,6 @@
 import { Avatar, Button, Card, CardBody, Input } from "@nextui-org/react";
 import MessageBubble from "./message.buble";
-import { FC, useEffect, useState } from "react";
+import { FC, FormEvent, useEffect, useState } from "react";
 import { Socket, io } from "socket.io-client";
 
 interface ChatScreen {
@@ -9,7 +9,7 @@ interface ChatScreen {
 
 let socket: Socket;
 
-const ChatScreen:FC<ChatScreen> = (props) => {
+const ChatScreen: FC<ChatScreen> = (props) => {
 
     const [messages, setMessages] = useState<string[]>([]); 
     const [messageInputValue, setMessageInputValue] = useState<string>('')
@@ -18,7 +18,8 @@ const ChatScreen:FC<ChatScreen> = (props) => {
         setMessageInputValue(text)
     }
 
-    const handleMessage = async () => {
+    const handleMessage = async (e: FormEvent<HTMLButtonElement> | FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         await socket.emit('messageToServer', {room: 'room 1', text: messageInputValue})
         setMessageInputValue('');
     };
@@ -48,7 +49,7 @@ const ChatScreen:FC<ChatScreen> = (props) => {
 
     return (
         <>
-            <Card className="w-full bg-white absolute top-0 bottom-0 pt-4 ">
+            <Card className="w-full rounded-none md:rounded-lg bg-white absolute top-0 bottom-0 pt-4 ">
                 <CardBody className="px-0 pt-0 relative">
                     <div className="drop-shadow-lg w-full pb-3 px-8 border-b-1 absolute z-30 bg-white flex items-center justify-between">
                         <div>
@@ -77,7 +78,7 @@ const ChatScreen:FC<ChatScreen> = (props) => {
                             ))}
                         </div>
                     </div>
-                    <div className="w-full px-8 py-4 border-t-1 absolute bottom-0">
+                    <form onSubmit={handleMessage} className="w-full px-8 py-4 border-t-1 absolute bottom-0">
                         <div className="flex gap-4">
                             <Input 
                                 size='sm' 
@@ -87,15 +88,16 @@ const ChatScreen:FC<ChatScreen> = (props) => {
                                 onChange={(e) => handleChangeValue(e.target.value)}
                             />
                             <Button 
+                                type='submit'
                                 className="h-12"
                                 size='md'
                                 variant='bordered'
-                                onClick={handleMessage}
+                                onSubmit={handleMessage}
                             >
                                 Send 
                             </Button>
                         </div>
-                    </div>
+                    </form>
                 </CardBody>
             </Card>
         </>

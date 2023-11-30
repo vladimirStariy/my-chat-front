@@ -1,14 +1,11 @@
-import { Avatar, Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
 import Sidebar from "../layout/sidebar/sidebar";
-import MessageBubble from "./message.buble";
-import NavigationBar from "../layout/navbar/navbar";
 import ChatScreen from "./chat.screen";
 
 const MainScreen = () => {
     return (
         <>
-            <div className="w-full h-full flex flex-row gap-4">
-                <div className="max-w-xs w-full relative">
+            <div className="w-full h-full px-0 md:px-4 lg:px-0 flex flex-row gap-4">
+                <div className="max-w-xs w-full relative hidden md:block">
                     <Sidebar />
                 </div>
                 <div className="w-full relative">

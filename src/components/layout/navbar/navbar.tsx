@@ -15,7 +15,7 @@ const NavigationBar = () => {
         setIsMenuOpen(false)
     }
 
-    return <div className="w-full">
+    return <div className="hidden md:block w-full">
         <Navbar 
             onMenuOpenChange={setIsMenuOpen} 
             maxWidth={"lg"} 
