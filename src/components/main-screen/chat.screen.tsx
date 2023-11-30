@@ -74,8 +74,8 @@ const ChatScreen: FC<ChatScreen> = (props) => {
                             />
                         </div>
                     </div>
-                    <div className="w-full max-h-full overflow-y-auto absolute bottom-0 top-0 mt-[3.3rem] mb-20">
-                        <div ref={messagesEndRef} className="px-8 pt-4 w-full max-h-full flex flex-col gap-2 pb-4 overflow-y-auto">
+                    <div ref={messagesEndRef} className="w-full max-h-full overflow-y-auto absolute bottom-0 top-0 mt-[3.3rem] mb-20">
+                        <div className="px-8 pt-4 w-full max-h-full flex flex-col gap-2 pb-4">
                             <MessageBubble
                                 isMine={true}
                                 text="Hello how a you?"
