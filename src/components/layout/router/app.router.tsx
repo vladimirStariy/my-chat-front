@@ -8,7 +8,7 @@ const AppRouter = () => {
         <Routes>
             <Route path='/auth' element={<AuthScreen />} />
 
-            <Route path='/' element={<div className='w-full h-full pt-4 pb-4 max-w-5xl flex flex-col gap-4 relative'>
+            <Route path='/' element={<div className='w-full h-full pb-4 max-w-5xl flex flex-col gap-4 relative'>
                     <NavigationBar />
                     <MainScreen />
                 </div>

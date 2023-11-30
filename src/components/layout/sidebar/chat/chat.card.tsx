@@ -4,7 +4,7 @@ import { DotsIcon } from "../../../icons/icons";
 const ChatCard = () => {
     return (
         <>
-            <Card shadow='none'>
+            <Card isPressable shadow='none'>
                 <CardBody className="p-0">
                     <div className="flex flex-row items-center justify-between">
                         <div className="flex flex-row gap-4 items-center">
