@@ -26,15 +26,12 @@ const ChatScreen: FC<ChatScreen> = (props) => {
         await socket.emit('messageToServer', {room: 'room 1', text: messageInputValue})
         setMessageInputValue('');
         inputRef.current?.focus()
+        scrollToBottom();
     };
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages])
 
     useEffect(() => {
         if(socket) {
@@ -75,7 +72,7 @@ const ChatScreen: FC<ChatScreen> = (props) => {
                         </div>
                     </div>
                     <div className="w-full max-h-full overflow-y-auto absolute bottom-0 top-0 mt-[3.3rem] mb-20">
-                        <div className="px-8 pt-4 w-full max-h-full flex flex-col gap-2 pb-4">
+                        <div className="px-8 pt-4 pb-4 w-full max-h-full flex flex-col gap-2 pb-4">
                             <MessageBubble
                                 isMine={true}
                                 text="Hello how a you?"
