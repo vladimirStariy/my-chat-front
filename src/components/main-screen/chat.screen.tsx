@@ -33,6 +33,10 @@ const ChatScreen: FC<ChatScreen> = (props) => {
     }
 
     useEffect(() => {
+        scrollToBottom();
+    }, [messages.length])
+
+    useEffect(() => {
         if(socket) {
             socket.on('messageToServer', (e) => setMessages((prev) => [...prev, e]));
         }
