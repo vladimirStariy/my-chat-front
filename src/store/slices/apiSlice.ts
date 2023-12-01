@@ -25,7 +25,7 @@ const baseQueryWithReauth:
     let result = await baseQuery(args, api, extraOptions)
 
     if (result.error && (result.error.status === 401 || result.error.status === 403) ) {
-        const refreshResult = await baseQuery('/refresh', api, extraOptions)
+        const refreshResult = await baseQuery('/auth/refresh', api, extraOptions)
         if(refreshResult.error?.status) console.log(refreshResult)
         if (refreshResult.data) {
             api.dispatch(setCredentials({access: (refreshResult.data as {access: string}).access}))

@@ -98,10 +98,6 @@ const ChatScreen: FC<ChatScreen> = (props) => {
                     </div>
                     <div className="w-full overflow-y-auto absolute bottom-0 top-0 mt-[3.3rem] mb-20">
                         <div className="px-8 pt-4 w-full flex flex-col gap-2">
-                            <MessageBubble
-                                isMine={true}
-                                text="Hello how a you?"
-                            />
                             {messages.map((item) => (
                                 <>
                                     <MessageBubble
