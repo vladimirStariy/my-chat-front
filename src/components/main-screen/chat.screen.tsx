@@ -23,18 +23,28 @@ const ChatScreen: FC<ChatScreen> = (props) => {
 
     const handleMessage = async (e: FormEvent<HTMLButtonElement> | FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        await socket.emit('messageToServer', {room: 'room 1', text: messageInputValue})
-        setMessageInputValue('');
+        if(messageInputValue !== undefined && messageInputValue.split(" ").join("") !== '') {
+            await socket.emit('messageToServer', {room: 'room 1', text: messageInputValue})
+            setMessageInputValue('');
+        }
         inputRef.current?.focus()
     };
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
     }
 
     useEffect(() => {
         scrollToBottom();
     }, [messages.length])
+
+    useEffect(() => {
+        document.addEventListener('keydown', detectKeyPressed, true);
+    }, [])
+
+    const detectKeyPressed = () => {
+        inputRef.current?.focus()
+    }
 
     useEffect(() => {
         if(socket) {
@@ -74,8 +84,8 @@ const ChatScreen: FC<ChatScreen> = (props) => {
                             />
                         </div>
                     </div>
-                    <div className="w-full max-h-full pb-4 overflow-y-auto absolute bottom-0 top-0 mt-[3.3rem] mb-20">
-                        <div className="px-8 pt-4  w-full max-h-full flex flex-col gap-2 pb-4">
+                    <div className="w-full overflow-y-auto absolute bottom-0 top-0 mt-[3.3rem] mb-20">
+                        <div className="px-8 pt-4 w-full flex flex-col gap-2">
                             <MessageBubble
                                 isMine={true}
                                 text="Hello how a you?"
@@ -89,7 +99,7 @@ const ChatScreen: FC<ChatScreen> = (props) => {
                                 </>
                             ))}
                         </div>
-                        <div className="" ref={messagesEndRef} />
+                        <div className="pb-4" ref={messagesEndRef} />
                     </div>
                     <form onSubmit={handleMessage} className="w-full px-8 py-4 border-t-1 absolute bottom-0">
                         <div className="flex gap-4">
