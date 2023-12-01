@@ -1,8 +1,3 @@
-export interface IAuthFormErrors {
-    emailError: boolean;
-    passwordError: boolean;
-}
-
 export interface ILoginRequest {
     email: string | null;
     password: string | null;

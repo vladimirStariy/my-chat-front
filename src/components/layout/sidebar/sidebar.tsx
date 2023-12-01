@@ -1,8 +1,13 @@
 import { Card, CardBody, CardHeader, Input, Tab, Tabs } from "@nextui-org/react";
 import ChatsTab from "./chat/chats.tab";
 import FriendsTab from "./friend/friends.tab";
+import { FC } from "react";
 
-const Sidebar = () => {
+interface SidebarProps {
+    handleChangeRoom: (room: string) => void;
+}
+
+const Sidebar: FC<SidebarProps> = (props) => {
     return (
         <>
             <Card className="w-full overflow-y-auto absolute top-0 bottom-0 pt-4">
@@ -19,7 +24,9 @@ const Sidebar = () => {
                         }}
                     >
                         <Tab className="overflow-y-auto" key="chats" title="Chats">
-                            <ChatsTab />
+                            <ChatsTab 
+                                handleChangeRoom={props.handleChangeRoom}
+                            />
                         </Tab>
                         <Tab className="overflow-y-auto" key="friends" title="Friends">
                             <FriendsTab />

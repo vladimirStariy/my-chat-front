@@ -3,6 +3,11 @@ import MessageBubble from "./message.buble";
 import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Socket, io } from "socket.io-client";
 
+interface Message {
+    isMine: boolean;
+    text: string;
+}
+
 interface ChatScreen {
     room?: string;
 }
@@ -11,7 +16,7 @@ let socket: Socket;
 
 const ChatScreen: FC<ChatScreen> = (props) => {
 
-    const [messages, setMessages] = useState<string[]>([]); 
+    const [messages, setMessages] = useState<Message[]>([]); 
     const [messageInputValue, setMessageInputValue] = useState<string>('')
 
     const inputRef = useRef<HTMLInputElement>(null)
@@ -24,7 +29,8 @@ const ChatScreen: FC<ChatScreen> = (props) => {
     const handleMessage = async (e: FormEvent<HTMLButtonElement> | FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if(messageInputValue !== undefined && messageInputValue.split(" ").join("") !== '') {
-            await socket.emit('messageToServer', {room: 'room 1', text: messageInputValue})
+            await socket.emit('messageToServer', {room: props.room, text: messageInputValue})
+            console.log(socket.id)
             setMessageInputValue('');
         }
         inputRef.current?.focus()
@@ -48,7 +54,10 @@ const ChatScreen: FC<ChatScreen> = (props) => {
 
     useEffect(() => {
         if(socket) {
-            socket.on('messageToServer', (e) => setMessages((prev) => [...prev, e]));
+            socket.on('messageToServer', (e) => {
+                if(e.client === socket.id) setMessages((prev) => [...prev, {text: e.message, isMine: true}])
+                else setMessages((prev) => [...prev, {text: e.message, isMine: false}]) 
+            });
         }
         return () => {
             if(socket) {
@@ -62,12 +71,15 @@ const ChatScreen: FC<ChatScreen> = (props) => {
             socket = io(`${process.env.REACT_APP_BASE_URL}`);
         }
         connect();
-        socket.emit('joinChat', "chat 1")
+        socket.on('connect', () => {
+            socket.emit('room', props.room)
+        })
+        socket.emit('joinChat', props.room)
         return () => {
-            socket.emit("leaveChat", "chat 1")
+            socket.emit("leaveChat", props.room)
             socket.disconnect();
         };
-    }, [])
+    }, [props.room])
 
     return (
         <>
@@ -93,8 +105,8 @@ const ChatScreen: FC<ChatScreen> = (props) => {
                             {messages.map((item) => (
                                 <>
                                     <MessageBubble
-                                        isMine
-                                        text={item}
+                                        isMine={item.isMine}
+                                        text={item.text}
                                     />
                                 </>
                             ))}

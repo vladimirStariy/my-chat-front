@@ -10,11 +10,12 @@ import { Tabs, Tab, Input, Link, Button, Card, CardBody } from "@nextui-org/reac
 import { useNavigate } from 'react-router-dom';
 import { authValidationSchema, loginValidationSchema } from './validation.schema';
 import { useTranslation } from 'react-i18next';
+import { useSigninMutation, useSignupMutation } from '../../store/services/auth.service';
 
 interface IAuthFormData {
     email: string;
     password: string;
-    name: string;
+    username: string;
 }
 
 interface ILoginFormData {
@@ -29,8 +30,8 @@ const AuthScreen = () => {
 
     const { t } = useTranslation();
 
-    //const [signup, {isLoading: signupLoading, error: signupError, isError: isRegisterError}] = useRegisterMutation();
-    //const [signin, {isLoading: signinLoading, error: signinError, isError: isLoginError}] = useLoginMutation();
+    const [signup, {isLoading: signupLoading, error: signupError, isError: isRegisterError}] = useSignupMutation();
+    const [signin, {isLoading: signinLoading, error: signinError, isError: isLoginError}] = useSigninMutation();
 
     const {
         register,
@@ -45,14 +46,14 @@ const AuthScreen = () => {
     } = useForm<ILoginFormData>({resolver: yupResolver(loginValidationSchema)})
 
     const onSubmit: SubmitHandler<IAuthFormData> = async (data) => {
-        //await signup(data);
+        const response = await signup(data);
         setSelected("login")
     }
 
     const onLoginSubmit: SubmitHandler<ILoginFormData> = async (data) => {
-        //const response = await signin(data).unwrap();
-        //dispatch(setCredentials({access: response.access}))
-        navigate('/my-collections');
+        const response = await signin(data).unwrap();
+        dispatch(setCredentials({access: response.access}))
+        navigate('/');
     }
 
     return <>
@@ -102,13 +103,13 @@ const AuthScreen = () => {
                         <Tab key="sign-up" title={`${t("signupTabName")}`}>
                             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
                                 <div className='w-full text-center'>
-                                    <Input {...register("name")} 
-                                        color={errors.name ? 'danger' : 'default'}
+                                    <Input {...register("username")} 
+                                        color={errors.username ? 'danger' : 'default'}
                                         label={`${t("nameInputLabel")}`}
                                         placeholder={`${t("nameInputPlaceholder")}`} 
                                         type="text" 
                                     />
-                                    {errors.name ? <p className='text-danger'>{errors.name.message}</p> : <></>}
+                                    {errors.username ? <p className='text-danger'>{errors.username.message}</p> : <></>}
                                 </div>
                                 <div className='w-full text-center'>
                                     <Input {...register("email")} 
@@ -135,7 +136,13 @@ const AuthScreen = () => {
                                     </Link>
                                 </p>
                                 <div className="flex gap-2 justify-end">
-                                    <Button type='submit' fullWidth color="primary">
+                                    <Button 
+                                        isLoading={signupLoading} 
+                                        onSubmit={handleSubmit(onSubmit)} 
+                                        type='submit' 
+                                        fullWidth 
+                                        color="primary"
+                                    >
                                         {`${t("signupTabName")}`}
                                     </Button>
                                 </div>
