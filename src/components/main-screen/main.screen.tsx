@@ -2,13 +2,15 @@ import { useState } from "react";
 import Sidebar from "../layout/sidebar/sidebar";
 import ChatScreen from "./chat.screen";
 import { Card } from "@nextui-org/react";
+import { Socket, io } from "socket.io-client";
+
+let socket: Socket;
 
 const MainScreen = () => {
     const [currentChatRoom, setCurrentChatRoom] = useState<string>("NONE");
 
     const handleSetChatRoom = (room: string) => {
         setCurrentChatRoom(room);
-        console.log(room)
     }
 
     return (

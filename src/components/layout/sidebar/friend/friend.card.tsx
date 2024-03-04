@@ -1,7 +1,14 @@
 import { Avatar, Button, Card, CardBody, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from "@nextui-org/react";
 import { DotsIcon } from "../../../icons/icons";
+import { FC } from "react";
 
-const FriendsCard = () => {
+interface FriendsCardProps {
+    username: string;
+    usertag: string;
+    room: string;
+}
+
+const FriendsCard: FC<FriendsCardProps> = (props) => {
     return (
         <>
         <Card shadow='none'>
@@ -13,7 +20,7 @@ const FriendsCard = () => {
                             size="lg"
                         />
                         <div className="flex flex-col gap-1 items-start justify-center">
-                            <h4 className="font-semibold leading-none text-default-600">Friend name</h4>
+                            <h4 className="font-semibold leading-none text-default-600">{props.username}</h4>
                             <h5 className="text-small tracking-tight text-default-400">@tag</h5>
                         </div>
                     </div>

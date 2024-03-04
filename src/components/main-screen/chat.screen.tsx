@@ -2,84 +2,82 @@ import { Avatar, Button, Card, CardBody, Input } from "@nextui-org/react";
 import MessageBubble from "./message.buble";
 import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Socket, io } from "socket.io-client";
+import { useSelector } from "react-redux";
+import { selectCurrentToken } from "../../store/slices/authSlice";
 
 interface Message {
-    isMine: boolean;
-    text: string;
+  isMine: boolean;
+  text: string;
 }
 
 interface ChatScreen {
-    room?: string;
+  room?: string;
 }
 
 let socket: Socket;
 
 const ChatScreen: FC<ChatScreen> = (props) => {
+  const token = useSelector(selectCurrentToken);
+  const [messages, setMessages] = useState<Message[]>([]); 
+  const [messageInputValue, setMessageInputValue] = useState<string>('')
+  const inputRef = useRef<HTMLInputElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const handleChangeValue = (text: string) => { setMessageInputValue(text) }
 
-    const [messages, setMessages] = useState<Message[]>([]); 
-    const [messageInputValue, setMessageInputValue] = useState<string>('')
-
-    const inputRef = useRef<HTMLInputElement>(null)
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-
-    const handleChangeValue = (text: string) => {
-        setMessageInputValue(text)
+  const handleMessage = async (e: FormEvent<HTMLButtonElement> | FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if(messageInputValue !== undefined && messageInputValue.split(" ").join("") !== '') {
+      const response = await socket.emit('messageToServer', {room: props.room, text: messageInputValue})
+      setMessageInputValue('');
     }
+    inputRef.current?.focus()
+  };
 
-    const handleMessage = async (e: FormEvent<HTMLButtonElement> | FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if(messageInputValue !== undefined && messageInputValue.split(" ").join("") !== '') {
-            await socket.emit('messageToServer', {room: props.room, text: messageInputValue})
-            console.log(socket.id)
-            setMessageInputValue('');
-        }
-        inputRef.current?.focus()
-    };
+  const scrollToBottom = () => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }) }
+  useEffect(() => { scrollToBottom() }, [messages.length])
+  useEffect(() => { document.addEventListener('keydown', detectKeyPressed, true) }, [])
+  const detectKeyPressed = () => { inputRef.current?.focus() }
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+  useEffect(() => {
+    if(socket) {
+      socket.on('messageToServer', (e) => {
+        if(e.client === socket.id) setMessages((prev) => [...prev, {text: e.message, isMine: true}])
+        else setMessages((prev) => [...prev, {text: e.message, isMine: false}]) 
+      });
+      socket.on('error', (e) => {
+        if(e.status === 403) console.log("REFRESH TOKEN AND  LOGIC")
+      });
     }
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages.length])
-
-    useEffect(() => {
-        document.addEventListener('keydown', detectKeyPressed, true);
-    }, [])
-
-    const detectKeyPressed = () => {
-        inputRef.current?.focus()
+    return () => {
+      if(socket) {
+        socket.off('messageToClient');
+        socket.off('error');
+      }
     }
+  }, [socket]);
 
-    useEffect(() => {
-        if(socket) {
-            socket.on('messageToServer', (e) => {
-                if(e.client === socket.id) setMessages((prev) => [...prev, {text: e.message, isMine: true}])
-                else setMessages((prev) => [...prev, {text: e.message, isMine: false}]) 
-            });
-        }
-        return () => {
-            if(socket) {
-                socket.off('messageToClient');
+  useEffect(() => {
+    const connect = async () => {
+      socket = io(`${process.env.REACT_APP_BASE_URL}chat`, {
+        transportOptions: {
+          polling: {
+            extraHeaders: {
+              Authorization: `Bearer ${token}`
             }
+          }
         }
-    }, [socket]);
-
-    useEffect(() => {
-        const connect = async () => {
-            socket = io(`${process.env.REACT_APP_BASE_URL}`);
-        }
-        connect();
-        socket.on('connect', () => {
-            socket.emit('room', props.room)
-        })
-        socket.emit('joinChat', props.room)
-        return () => {
-            socket.emit("leaveChat", props.room)
-            socket.disconnect();
-        };
-    }, [props.room])
+      });
+    }
+    connect();
+    socket.on('connect', () => {
+      socket.emit('room', props.room)
+    })
+    socket.emit('joinChat', props.room)
+    return () => {
+      socket.emit("leaveChat", props.room)
+      socket.disconnect();
+    };
+  }, [props.room])
 
     return (
         <>
