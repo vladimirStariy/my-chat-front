@@ -4,13 +4,13 @@ import { apiSlice } from "./slices/apiSlice";
 import { TypedUseSelectorHook, useSelector, useDispatch } from "react-redux";
 import storage from 'redux-persist/lib/storage';
 import {
-    persistReducer,
-    FLUSH,
-    REHYDRATE,
-    PAUSE,
-    PERSIST,
-    PURGE,
-    REGISTER,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
 } from 'redux-persist'
 
 const rootReducer = combineReducers({

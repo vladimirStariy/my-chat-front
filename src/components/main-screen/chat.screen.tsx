@@ -2,8 +2,11 @@ import { Avatar, Button, Card, CardBody, Input } from "@nextui-org/react";
 import MessageBubble from "./message.buble";
 import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Socket, io } from "socket.io-client";
-import { useSelector } from "react-redux";
-import { selectCurrentToken } from "../../store/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrentToken, setCredentials } from "../../store/slices/authSlice";
+import { RefreshSocketHelper } from "../../store/helpers/socket.refresh.helper";
+import { useRefreshMutationMutation } from "../../store/services/auth.service";
+import { useGetMessagesQuery } from "../../store/services/chat.service";
 
 interface Message {
   isMine: boolean;
@@ -11,7 +14,7 @@ interface Message {
 }
 
 interface ChatScreen {
-  room?: string;
+  room: string;
 }
 
 let socket: Socket;
@@ -23,11 +26,15 @@ const ChatScreen: FC<ChatScreen> = (props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const handleChangeValue = (text: string) => { setMessageInputValue(text) }
+  const [refreshToken] = useRefreshMutationMutation();
+  const dispatch = useDispatch();
+
+  const {data: fetchedMessages} = useGetMessagesQuery({chatRoomId: props.room, page: 1, limit: 20})
 
   const handleMessage = async (e: FormEvent<HTMLButtonElement> | FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if(messageInputValue !== undefined && messageInputValue.split(" ").join("") !== '') {
-      const response = await socket.emit('messageToServer', {room: props.room, text: messageInputValue})
+      await socket.emit('messageToServer', {room: props.room, text: messageInputValue})
       setMessageInputValue('');
     }
     inputRef.current?.focus()
@@ -39,13 +46,20 @@ const ChatScreen: FC<ChatScreen> = (props) => {
   const detectKeyPressed = () => { inputRef.current?.focus() }
 
   useEffect(() => {
+    console.log(fetchedMessages)
+  }, [fetchedMessages])
+
+  useEffect(() => {
     if(socket) {
-      socket.on('messageToServer', (e) => {
+      socket.on('messageToServer', async (e) => {
         if(e.client === socket.id) setMessages((prev) => [...prev, {text: e.message, isMine: true}])
         else setMessages((prev) => [...prev, {text: e.message, isMine: false}]) 
       });
-      socket.on('error', (e) => {
-        if(e.status === 403) console.log("REFRESH TOKEN AND  LOGIC")
+      socket.on('error', async (e) => {
+        if(e.status === 401) {
+          const data = await refreshToken().unwrap();
+          if(data) dispatch(setCredentials({access: data.access}))
+        } 
       });
     }
     return () => {
@@ -77,7 +91,7 @@ const ChatScreen: FC<ChatScreen> = (props) => {
       socket.emit("leaveChat", props.room)
       socket.disconnect();
     };
-  }, [props.room])
+  }, [props.room, token])
 
     return (
         <>

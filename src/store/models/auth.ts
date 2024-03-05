@@ -1,17 +1,14 @@
 export interface ILoginRequest {
-    email: string | null;
-    password: string | null;
+  email: string | null;
+  password: string | null;
 }
-
 export interface ILoginResponse {
-    access: string;
+  access: string;
 }
-
 export interface IRegisterRequest {
-    email: string | null;
-    password: string | null;
+  email: string | null;
+  password: string | null;
 }
-
 export interface IRegisterResponse {
-    status: string;
+  status: string;
 }

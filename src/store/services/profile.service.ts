@@ -1,8 +1,14 @@
-import { AddFriendRequest, FriendRequests, FriendSolution, MyFriends } from "../models/profile";
+import { AddFriendRequest, FriendRequests, FriendSolution, MyFriends, ProfileUserData } from "../models/profile";
 import { apiSlice } from "../slices/apiSlice";
 
 export const profileAPI = apiSlice.injectEndpoints({
     endpoints: (build) => ({
+        getProfileUserData: build.mutation<ProfileUserData, void>({
+          query: () => ({
+            url: 'profile/profile',
+            method: 'GET'
+          }),
+        }), 
         addFriend: build.mutation<void, AddFriendRequest>({
             query: (credentials) => ({
                 url: 'profile/add-friend',
@@ -30,19 +36,20 @@ export const profileAPI = apiSlice.injectEndpoints({
                 body: {...credentials}
             }),
         }),
-        getFriends: build.query<MyFriends[], void>({
-            query: () => ({
-                url: 'profile/my-friends',
-                method: 'GET',
-            })
+        getFriends: build.query<MyFriends[], {page: number, limit: number}>({
+          query: ({page, limit}) => ({
+            url: `profile/friends?page=${page}&limit=${limit}`,
+            method: 'GET',
+          })
         }),
     })
 })
 
 export const {
-    useAddFriendMutation,
-    useGetFriendsRequestsQuery,
-    useAcceptFriendsRequestMutation,
-    useRejectFriendsRequestMutation,
-    useGetFriendsQuery
+  useAddFriendMutation,
+  useGetFriendsRequestsQuery,
+  useAcceptFriendsRequestMutation,
+  useRejectFriendsRequestMutation,
+  useGetFriendsQuery,
+  useGetProfileUserDataMutation
 } = profileAPI;

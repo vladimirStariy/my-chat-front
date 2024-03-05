@@ -2,39 +2,46 @@ import { ILoginRequest, ILoginResponse, IRegisterRequest, IRegisterResponse } fr
 import { apiSlice } from "../slices/apiSlice";
 
 export const authAPI = apiSlice.injectEndpoints({
-    endpoints: (build) => ({
-        signin: build.mutation<ILoginResponse, ILoginRequest>({
-            query: (credentials) => ({
-                url: 'auth/login',
-                method: 'POST',
-                body: {...credentials}
-            }),
-        }),
-        signup: build.mutation<IRegisterResponse, IRegisterRequest>({
-            query: (credentials) => ({
-                url: 'auth/register',
-                method: 'POST',
-                body: {...credentials}
-            }),
-        }),
-        refresh: build.query<ILoginResponse, void>({
-            query: () => ({
-                url: 'auth/refresh',
-                method: 'GET',
-            })
-        }),
-        logout: build.mutation<void, void>({
-            query: () => ({
-                url: 'auth/logout',
-                method: 'GET'
-            })
-        })
+  endpoints: (build) => ({
+    signin: build.mutation<ILoginResponse, ILoginRequest>({
+      query: (credentials) => ({
+        url: 'auth/login',
+        method: 'POST',
+        body: {...credentials}
+      }),
+    }),
+    signup: build.mutation<IRegisterResponse, IRegisterRequest>({
+      query: (credentials) => ({
+        url: 'auth/register',
+        method: 'POST',
+        body: {...credentials}
+      }),
+    }),
+    refresh: build.query<ILoginResponse, void>({
+      query: () => ({
+        url: 'auth/refresh',
+        method: 'GET',
+      })
+    }),
+    refreshMutation: build.mutation<ILoginResponse, void>({
+      query: () => ({
+        url: 'auth/refresh',
+        method: 'GET',
+      })
+    }),
+    logout: build.mutation<void, void>({
+      query: () => ({
+        url: 'auth/logout',
+        method: 'GET'
+      })
     })
+  })
 })
 
 export const {
-    useSigninMutation,
-    useSignupMutation,
-    useRefreshQuery,
-    useLogoutMutation
+  useSigninMutation,
+  useSignupMutation,
+  useRefreshQuery,
+  useLogoutMutation,
+  useRefreshMutationMutation
 } = authAPI;

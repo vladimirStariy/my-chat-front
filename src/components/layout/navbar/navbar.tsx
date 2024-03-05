@@ -2,12 +2,14 @@ import { Navbar, Link as NextLink, NavbarBrand, NavbarContent, NavbarItem, Butto
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import LanguageSelect from "./language-select/language.select";
 import { useDispatch, useSelector } from "react-redux";
-import { logOut, selectCurrentToken } from "../../../store/slices/authSlice";
+import { logOut, selectCurrentToken, selectCurrentUsername, selectCurrentUsertag } from "../../../store/slices/authSlice";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const NavigationBar = () => {
     const auth = useSelector(selectCurrentToken);
+    const username = useSelector(selectCurrentUsername);
+    const usertag = useSelector(selectCurrentUsertag);
     const { t } = useTranslation();
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
@@ -32,14 +34,18 @@ const NavigationBar = () => {
                 <Link to='/' className="font-bold text-xl">SIMPLE CHATS</Link>
             </NavbarBrand>
             <NavbarContent className="hidden md:flex gap-4" justify="end">
-                {auth ? <>
-                    <Dropdown placement="bottom-end">
-                        <DropdownTrigger>
-                            <Avatar
-                                name="user"
-                                as="button"
-                                className="transition-transform"
-                            />
+              {auth ? <>
+                <div className="flex flex-col items-end">
+                  <div>{username}</div>
+                  <div className="text-xs">{usertag}</div>
+                </div>     
+                <Dropdown placement="bottom-end">
+                  <DropdownTrigger>
+                          <Avatar
+                            name={`${username}`}
+                            as="button"
+                            className="transition-transform"
+                          />
                         </DropdownTrigger>
                         <DropdownMenu aria-label="Profile Actions" variant="flat">                       
                             <DropdownItem key="my_collections">

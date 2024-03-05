@@ -1,29 +1,33 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import ChatCard from "./chat.card";
+import { useGetFriendsQuery } from "../../../../store/services/profile.service";
 
 interface ChatsTabProps {
     handleChangeRoom: (room: string) => void;
 }
 
 const ChatsTab:FC<ChatsTabProps> = (props) => {
-    return (
-        <>
-            <div className="flex flex-col  gap-4">
-                <ChatCard 
-                    room="room 1" 
-                    handleChangeRoom={props.handleChangeRoom}
-                />
-                <ChatCard 
-                    room="room 2" 
-                    handleChangeRoom={props.handleChangeRoom}
-                />
-                <ChatCard 
-                    room="room 3" 
-                    handleChangeRoom={props.handleChangeRoom}
-                />
-            </div>
-        </>
-    );
+  const {data: friends} = useGetFriendsQuery({page: 1, limit: 10});
+  
+  useEffect(() => {
+    console.log(friends)
+  }, [])
+  
+  return (
+    <>
+      <div className="flex flex-col gap-4">
+        {friends && friends.length > 0 ? friends.map((item, index) => (
+          <ChatCard 
+            key={index} 
+            username={item.username}
+            room={item.roomId}
+            usertag={item.usertag}
+            handleChangeRoom={props.handleChangeRoom}
+          />
+        )) : <></>}
+      </div>
+    </>
+  );
 }
 
 export default ChatsTab;

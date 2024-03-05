@@ -3,6 +3,8 @@ import { DotsIcon } from "../../../icons/icons";
 import { FC, useState } from "react";
 
 interface ChatProps {
+    usertag: string;
+    username: string;
     room: string;
     handleChangeRoom: (room: string) => void;
 }
@@ -21,12 +23,12 @@ const ChatCard: FC<ChatProps> = (props) => {
                     <div className="flex flex-row items-center justify-between">
                         <div className="flex flex-row gap-4 items-center">
                             <Avatar 
-                                name="friend"
-                                size="lg"
+                              name={`${props.username}`}
+                              size="lg"
                             />
                             <div className="flex flex-col gap-1 items-start justify-center">
-                                <h4 className="font-semibold leading-none text-default-600">{props.room}</h4>
-                                <h5 className="text-small tracking-tight text-default-400">@tag</h5>
+                              <h4 className="font-semibold leading-none text-default-600">{props.username}</h4>
+                              <h5 className="text-small tracking-tight text-default-400">@tag</h5>
                             </div>
                         </div>
                         <Dropdown>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux';
-import { setCredentials } from '../../store/slices/authSlice';
+import { setCredentials, setUserData } from '../../store/slices/authSlice';
 
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -11,55 +11,57 @@ import { useNavigate } from 'react-router-dom';
 import { authValidationSchema, loginValidationSchema } from './validation.schema';
 import { useTranslation } from 'react-i18next';
 import { useSigninMutation, useSignupMutation } from '../../store/services/auth.service';
+import { useGetProfileUserDataMutation } from '../../store/services/profile.service';
 
 interface IAuthFormData {
-    email: string;
-    password: string;
-    username: string;
+  email: string;
+  password: string;
+  username: string;
 }
 
 interface ILoginFormData {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
 const AuthScreen = () => {
-    const [selected, setSelected] = useState<string>("login");
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
+  const [selected, setSelected] = useState<string>("login");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const [signup, {isLoading: signupLoading, error: signupError, isError: isRegisterError}] = useSignupMutation();
+  const [signin, {isLoading: signinLoading, error: signinError, isError: isLoginError}] = useSigninMutation();
+  const [getUserData, {isLoading: userDataLoading, error: userDataError, isError: isUserDataError}] = useGetProfileUserDataMutation();
 
-    const { t } = useTranslation();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<IAuthFormData>({resolver: yupResolver(authValidationSchema)})
 
-    const [signup, {isLoading: signupLoading, error: signupError, isError: isRegisterError}] = useSignupMutation();
-    const [signin, {isLoading: signinLoading, error: signinError, isError: isLoginError}] = useSigninMutation();
+  const {
+    register: loginRegister,
+    handleSubmit: handleLoginSubmit,
+    formState: loginFormState,
+  } = useForm<ILoginFormData>({resolver: yupResolver(loginValidationSchema)})
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors }
-    } = useForm<IAuthFormData>({resolver: yupResolver(authValidationSchema)})
+  const onSubmit: SubmitHandler<IAuthFormData> = async (data) => {
+    const response = await signup(data);
+    setSelected("login")
+  }
 
-    const {
-        register: loginRegister,
-        handleSubmit: handleLoginSubmit,
-        formState: loginFormState,
-    } = useForm<ILoginFormData>({resolver: yupResolver(loginValidationSchema)})
+  const onLoginSubmit: SubmitHandler<ILoginFormData> = async (data) => {
+    const response = await signin(data).unwrap();
+    dispatch(setCredentials({access: response.access}));
+    const userData = await getUserData().unwrap();
+    dispatch(setUserData({usertag: userData.usertag, username: userData.username}));
+    navigate('/');
+  }
 
-    const onSubmit: SubmitHandler<IAuthFormData> = async (data) => {
-        const response = await signup(data);
-        setSelected("login")
-    }
-
-    const onLoginSubmit: SubmitHandler<ILoginFormData> = async (data) => {
-        const response = await signin(data).unwrap();
-        dispatch(setCredentials({access: response.access}))
-        navigate('/');
-    }
-
-    return <>
-        <div className="flex flex-col w-full items-center justify-center pt-8">
-            <Card className="max-w-md w-full">
-                <CardBody className="overflow-hidden">
+  return <>
+    <div className="flex flex-col w-full items-center justify-center pt-8">
+      <Card className="max-w-md w-full">
+        <CardBody className="overflow-hidden">
                     <Tabs
                         fullWidth
                         size="md"

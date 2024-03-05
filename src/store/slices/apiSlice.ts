@@ -5,15 +5,13 @@ import { logOut, setCredentials } from "./authSlice";
 import { createApi } from "@reduxjs/toolkit/dist/query/react";
 
 const baseQuery = fetchBaseQuery({
-    credentials: "include",
-    baseUrl: process.env.REACT_APP_BASE_URL,
-    prepareHeaders: (headers, { getState }) => {
-        const token = (getState() as RootState).auth.access;
-        if(token) {
-            headers.set('authorization', `Bearer ${token}`);
-        }
-        return headers;
-    }
+  credentials: "include",
+  baseUrl: process.env.REACT_APP_BASE_URL,
+  prepareHeaders: (headers, { getState }) => {
+    const token = (getState() as RootState).auth.access;
+    if(token) headers.set('authorization', `Bearer ${token}`);
+    return headers;
+  }
 })
 
 const baseQueryWithReauth: 
