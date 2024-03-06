@@ -3,12 +3,13 @@ import MessageBubble from "./message.buble";
 import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Socket, io } from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
-import { selectCurrentToken, setCredentials } from "../../store/slices/authSlice";
+import { selectCurrentToken, selectCurrentUsertag, setCredentials } from "../../store/slices/authSlice";
 import { RefreshSocketHelper } from "../../store/helpers/socket.refresh.helper";
 import { useRefreshMutationMutation } from "../../store/services/auth.service";
 import { useGetMessagesQuery } from "../../store/services/chat.service";
 
 interface Message {
+  date?: Date;
   isMine: boolean;
   text: string;
 }
@@ -21,6 +22,7 @@ let socket: Socket;
 
 const ChatScreen: FC<ChatScreen> = (props) => {
   const token = useSelector(selectCurrentToken);
+  const usertag = useSelector(selectCurrentUsertag);
   const [messages, setMessages] = useState<Message[]>([]); 
   const [messageInputValue, setMessageInputValue] = useState<string>('')
   const inputRef = useRef<HTMLInputElement>(null)
@@ -46,7 +48,16 @@ const ChatScreen: FC<ChatScreen> = (props) => {
   const detectKeyPressed = () => { inputRef.current?.focus() }
 
   useEffect(() => {
+    setMessages([]);
+  }, [props.room])
+
+  useEffect(() => {
     console.log(fetchedMessages)
+    if(fetchedMessages)
+      fetchedMessages?.map((message) => {
+        if(message.usertag === usertag) setMessages((prev) => [...prev, {text: message.text, isMine: true, date: message.messageDate}])
+        else setMessages((prev) => [...prev, {text: message.text, isMine: false}])
+      })
   }, [fetchedMessages])
 
   useEffect(() => {

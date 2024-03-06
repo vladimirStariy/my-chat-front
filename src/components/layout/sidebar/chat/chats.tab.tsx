@@ -11,7 +11,7 @@ const ChatsTab:FC<ChatsTabProps> = (props) => {
   
   useEffect(() => {
     console.log(friends)
-  }, [])
+  }, [friends])
   
   return (
     <>

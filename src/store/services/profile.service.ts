@@ -9,12 +9,18 @@ export const profileAPI = apiSlice.injectEndpoints({
             method: 'GET'
           }),
         }), 
+        searchProfileByUsertag: build.mutation<ProfileUserData, string>({
+          query: (usertag) => ({
+            url: `profile/search-profile?usertag=${usertag}`,
+            method: 'GET'
+          }),
+        }),
         addFriend: build.mutation<void, AddFriendRequest>({
-            query: (credentials) => ({
-                url: 'profile/add-friend',
-                method: 'POST',
-                body: {...credentials}
-            }),
+          query: (usertag) => ({
+            url: 'profile/add-friend',
+            method: 'POST',
+            body: {usertag}
+          }),
         }),
         getFriendsRequests: build.query<FriendRequests[], void>({
             query: () => ({
@@ -51,5 +57,6 @@ export const {
   useAcceptFriendsRequestMutation,
   useRejectFriendsRequestMutation,
   useGetFriendsQuery,
-  useGetProfileUserDataMutation
+  useGetProfileUserDataMutation,
+  useSearchProfileByUsertagMutation
 } = profileAPI;

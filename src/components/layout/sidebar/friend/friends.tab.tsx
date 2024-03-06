@@ -1,34 +1,42 @@
 import { Button, Input } from "@nextui-org/react";
 import FriendsCard from "./friend.card";
-import { useAddFriendMutation, useGetFriendsQuery } from "../../../../store/services/profile.service";
-import { useEffect } from "react";
+import { useAddFriendMutation, useGetFriendsQuery, useSearchProfileByUsertagMutation } from "../../../../store/services/profile.service";
+import { useEffect, useState } from "react";
+import { ProfileUserData } from "../../../../store/models/profile";
+
+interface SearchDto {
+  username: string;
+  usertag: string;
+}
 
 const FriendsTab = () => {
-  const [addFriend] = useAddFriendMutation();
-  const {data: friends} = useGetFriendsQuery({page: 1, limit: 10});
+  const [searchByUsertag] = useSearchProfileByUsertagMutation();
+  const [searchInput, setSearchInput] = useState<string>("");
+  const [searchResulsts, setSearchResults] = useState<ProfileUserData[]>([]);
 
-  const handleAddFriend = async () => {
-    addFriend({usertag: 'tag'});
+  const handleSearchByUsertag = async () => {
+    if(searchInput.length > 0) {
+      const users = await searchByUsertag(searchInput).unwrap();
+      setSearchResults([users]);
+    }
   }
-
-  useEffect(() => {
-    console.log(friends)
-  }, [])
 
   return (
     <>
       <div className="flex flex-col gap-4">
-        <Input variant="bordered" placeholder="Search by usertag..." />
-          <div className="flex flex-col gap-4 overflow-y-auto">
-            {friends && friends.length > 0 ? friends.map((item, index) => (
-              <FriendsCard 
-                key={index} 
-                username={item.username}
-                room={item.roomId}
-                usertag={item.usertag}
-              />
-            )) : <></>}
-          </div>
+        <div className="flex flex-row gap-2">
+          <Input onChange={(e) => setSearchInput(e.target.value)} variant="bordered" placeholder="Search by usertag..." />
+          <Button onClick={handleSearchByUsertag} variant="bordered">search</Button>
+        </div>
+        <div className="flex flex-col gap-4 overflow-y-auto">
+          {searchResulsts ? searchResulsts.map((item, index) => (
+            <FriendsCard 
+              key={index} 
+              username={item.username}
+              usertag={item.usertag}
+            />
+          )) : <></>}
+        </div>
       </div>
     </>
   );

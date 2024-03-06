@@ -1,5 +1,5 @@
 export interface AddFriendRequest {
-    usertag: string;
+    friendUsertag: string;
 }
 export interface FriendRequests {
     usertag: string;
