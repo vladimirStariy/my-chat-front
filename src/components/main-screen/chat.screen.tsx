@@ -16,11 +16,13 @@ interface Message {
 
 interface ChatScreen {
   room: string;
+  socket: Socket;
+  otherFocused?: boolean;
 }
 
-let socket: Socket;
-
 const ChatScreen: FC<ChatScreen> = (props) => {
+  const [socket, setSocket] = useState(props.socket);
+
   const token = useSelector(selectCurrentToken);
   const usertag = useSelector(selectCurrentUsertag);
   const [messages, setMessages] = useState<Message[]>([]); 
@@ -28,15 +30,16 @@ const ChatScreen: FC<ChatScreen> = (props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const handleChangeValue = (text: string) => { setMessageInputValue(text) }
-  const [refreshToken] = useRefreshMutationMutation();
-  const dispatch = useDispatch();
 
-  const {data: fetchedMessages} = useGetMessagesQuery({chatRoomId: props.room, page: 1, limit: 20})
+  const [isError, setIsError] = useState<boolean>(false);
+  
+  const {data: fetchedMessages, refetch} = useGetMessagesQuery({chatRoomId: props.room, page: 1, limit: 20})
 
   const handleMessage = async (e: FormEvent<HTMLButtonElement> | FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(props.socket)
     if(messageInputValue !== undefined && messageInputValue.split(" ").join("") !== '') {
-      await socket.emit('messageToServer', {room: props.room, text: messageInputValue})
+      await props.socket.emit('messageToServer', {room: props.room, text: messageInputValue})
       setMessageInputValue('');
     }
     inputRef.current?.focus()
@@ -49,10 +52,14 @@ const ChatScreen: FC<ChatScreen> = (props) => {
 
   useEffect(() => {
     setMessages([]);
+    refetch();
   }, [props.room])
 
   useEffect(() => {
-    console.log(fetchedMessages)
+    console.log("IM FUCKING UPDATE")
+  }, [props.socket])
+
+  useEffect(() => {
     if(fetchedMessages)
       fetchedMessages?.map((message) => {
         if(message.usertag === usertag) setMessages((prev) => [...prev, {text: message.text, isMine: true, date: message.messageDate}])
@@ -61,48 +68,24 @@ const ChatScreen: FC<ChatScreen> = (props) => {
   }, [fetchedMessages])
 
   useEffect(() => {
-    if(socket) {
-      socket.on('messageToServer', async (e) => {
-        if(e.client === socket.id) setMessages((prev) => [...prev, {text: e.message, isMine: true}])
-        else setMessages((prev) => [...prev, {text: e.message, isMine: false}]) 
-      });
-      socket.on('error', async (e) => {
-        if(e.status === 401) {
-          const data = await refreshToken().unwrap();
-          if(data) dispatch(setCredentials({access: data.access}))
-        } 
-      });
-    }
+    props.socket.on('messageToServer', async (e) => {
+      if(e.client === props.socket.id) setMessages((prev) => [...prev, {text: e.message, isMine: true}])
+      else setMessages((prev) => [...prev, {text: e.message, isMine: false}]) 
+    });
+    
     return () => {
-      if(socket) {
-        socket.off('messageToClient');
-        socket.off('error');
+      if(props.socket) {
+        props.socket.off('messageToClient');
       }
     }
-  }, [socket]);
+  }, [props.socket, token]);
 
   useEffect(() => {
-    const connect = async () => {
-      socket = io(`${process.env.REACT_APP_BASE_URL}chat`, {
-        transportOptions: {
-          polling: {
-            extraHeaders: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        }
-      });
-    }
-    connect();
-    socket.on('connect', () => {
-      socket.emit('room', props.room)
-    })
-    socket.emit('joinChat', props.room)
+    props.socket.emit('joinChat', props.room)
     return () => {
-      socket.emit("leaveChat", props.room)
-      socket.disconnect();
+      props.socket.emit("leaveChat", props.room)
     };
-  }, [props.room, token])
+  }, [props.socket, props.room, token])
 
     return (
         <>

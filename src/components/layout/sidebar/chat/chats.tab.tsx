@@ -3,15 +3,11 @@ import ChatCard from "./chat.card";
 import { useGetFriendsQuery } from "../../../../store/services/profile.service";
 
 interface ChatsTabProps {
-    handleChangeRoom: (room: string) => void;
+  handleChangeRoom: (room: string) => void;
 }
 
 const ChatsTab:FC<ChatsTabProps> = (props) => {
   const {data: friends} = useGetFriendsQuery({page: 1, limit: 10});
-  
-  useEffect(() => {
-    console.log(friends)
-  }, [friends])
   
   return (
     <>

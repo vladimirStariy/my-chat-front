@@ -4,6 +4,8 @@ import AuthScreen from '../../auth/auth.screen';
 import NavigationBar from '../navbar/navbar';
 import ProtectedRoute from './protected.route';
 
+
+
 const AppRouter = () => {
     return (
         <Routes>

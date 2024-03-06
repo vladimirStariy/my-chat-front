@@ -7,8 +7,6 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
     const auth = useSelector(selectCurrentToken);
     let location = useLocation();
 
-    console.log(auth)
-
     if(!auth) return <Navigate to="/auth" state={{ from: location }} replace />
     return children;
 };
