@@ -7,6 +7,7 @@ import { selectCurrentToken, selectCurrentUsertag, setCredentials } from "../../
 import { RefreshSocketHelper } from "../../store/helpers/socket.refresh.helper";
 import { useRefreshMutationMutation } from "../../store/services/auth.service";
 import { useGetMessagesQuery } from "../../store/services/chat.service";
+import { socketEmit } from "../../store/helpers/socket.emitter";
 
 interface Message {
   date?: Date;
@@ -30,16 +31,13 @@ const ChatScreen: FC<ChatScreen> = (props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const handleChangeValue = (text: string) => { setMessageInputValue(text) }
-
-  const [isError, setIsError] = useState<boolean>(false);
   
   const {data: fetchedMessages, refetch} = useGetMessagesQuery({chatRoomId: props.room, page: 1, limit: 20})
 
   const handleMessage = async (e: FormEvent<HTMLButtonElement> | FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(props.socket)
-    if(messageInputValue !== undefined && messageInputValue.split(" ").join("") !== '') {
-      await props.socket.emit('messageToServer', {room: props.room, text: messageInputValue})
+    if(messageInputValue !== undefined && messageInputValue.split(" ").join("") !== '' && token) {
+      await socketEmit(props.socket, 'messageToServer', token, {room: props.room, text: messageInputValue})
       setMessageInputValue('');
     }
     inputRef.current?.focus()
@@ -56,10 +54,6 @@ const ChatScreen: FC<ChatScreen> = (props) => {
   }, [props.room])
 
   useEffect(() => {
-    console.log("IM FUCKING UPDATE")
-  }, [props.socket])
-
-  useEffect(() => {
     if(fetchedMessages)
       fetchedMessages?.map((message) => {
         if(message.usertag === usertag) setMessages((prev) => [...prev, {text: message.text, isMine: true, date: message.messageDate}])
@@ -69,23 +63,23 @@ const ChatScreen: FC<ChatScreen> = (props) => {
 
   useEffect(() => {
     props.socket.on('messageToServer', async (e) => {
+      console.log("не получает с сервера месседж на сюда и не")
       if(e.client === props.socket.id) setMessages((prev) => [...prev, {text: e.message, isMine: true}])
       else setMessages((prev) => [...prev, {text: e.message, isMine: false}]) 
     });
-    
     return () => {
       if(props.socket) {
-        props.socket.off('messageToClient');
+        props.socket.off('messageToServer');
       }
     }
-  }, [props.socket, token]);
+  }, [props.socket]);
 
   useEffect(() => {
     props.socket.emit('joinChat', props.room)
     return () => {
       props.socket.emit("leaveChat", props.room)
     };
-  }, [props.socket, props.room, token])
+  }, [props.socket, props.room])
 
     return (
         <>

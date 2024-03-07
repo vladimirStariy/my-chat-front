@@ -3,7 +3,7 @@ import { apiSlice } from "../slices/apiSlice";
 
 export const authAPI = apiSlice.injectEndpoints({
   endpoints: (build) => ({
-    signin: build.mutation<ILoginResponse, ILoginRequest>({
+    signin: build.mutation<string, ILoginRequest>({
       query: (credentials) => ({
         url: 'auth/login',
         method: 'POST',
@@ -17,13 +17,13 @@ export const authAPI = apiSlice.injectEndpoints({
         body: {...credentials}
       }),
     }),
-    refresh: build.query<ILoginResponse, void>({
+    refresh: build.query<string, void>({
       query: () => ({
         url: 'auth/refresh',
         method: 'GET',
       })
     }),
-    refreshMutation: build.mutation<ILoginResponse, void>({
+    refreshMutation: build.mutation<string, void>({
       query: () => ({
         url: 'auth/refresh',
         method: 'GET',
@@ -32,7 +32,7 @@ export const authAPI = apiSlice.injectEndpoints({
     logout: build.mutation<void, void>({
       query: () => ({
         url: 'auth/logout',
-        method: 'GET'
+        method: 'POST'
       })
     })
   })

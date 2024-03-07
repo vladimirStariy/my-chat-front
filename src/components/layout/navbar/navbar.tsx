@@ -5,13 +5,22 @@ import { useDispatch, useSelector } from "react-redux";
 import { logOut, selectCurrentToken, selectCurrentUsername, selectCurrentUsertag } from "../../../store/slices/authSlice";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLogoutMutation } from "../../../store/services/auth.service";
 
 const NavigationBar = () => {
-    const auth = useSelector(selectCurrentToken);
-    const username = useSelector(selectCurrentUsername);
-    const usertag = useSelector(selectCurrentUsertag);
-    const { t } = useTranslation();
-    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const auth = useSelector(selectCurrentToken);
+  const username = useSelector(selectCurrentUsername);
+  const usertag = useSelector(selectCurrentUsertag);
+  const { t } = useTranslation();
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const dispatch = useDispatch();
+  
+  const [logout] = useLogoutMutation()
+
+  const handleLogout = async () => {
+    await logout();
+    dispatch(logOut());
+  }
 
     const handleClose = () => {
         setIsMenuOpen(false)
@@ -51,7 +60,7 @@ const NavigationBar = () => {
                             <DropdownItem key="my_collections">
                                 <Link to='/'>PROFILE</Link>
                             </DropdownItem>
-                            <DropdownItem key="logout" color="danger">
+                            <DropdownItem onClick={handleLogout} key="logout" color="danger">
                                 LOG OUT
                             </DropdownItem>
                         </DropdownMenu>

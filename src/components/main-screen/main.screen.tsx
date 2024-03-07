@@ -30,15 +30,7 @@ const MainScreen = () => {
 
   useEffect(() => {
     const connect = async () => {
-      _socket = io(`${process.env.REACT_APP_BASE_URL}chat`, {
-        transportOptions: {
-          polling: {
-            extraHeaders: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        }
-      });
+      _socket = io(`${process.env.REACT_APP_BASE_URL}chat`);
     }
     connect();
     handleUpdateSocket(_socket);
@@ -48,14 +40,14 @@ const MainScreen = () => {
     return () => {
       _socket.disconnect();
     };
-  }, [token])
+  }, [])
 
   useEffect(() => {
     if(_socket) {
       _socket.on('error', async (e) => {
         if(e.status === 401) {
           const data = await refreshToken().unwrap();
-          if(data) dispatch(setCredentials({access: data.access}))
+          if(data) dispatch(setCredentials({access: data}))
         } 
       });
     }
@@ -64,7 +56,7 @@ const MainScreen = () => {
         _socket.off('error');
       }
     }
-  }, [_socket])
+  }, [_socket, token])
 
   return (
     <>

@@ -52,7 +52,7 @@ const AuthScreen = () => {
 
   const onLoginSubmit: SubmitHandler<ILoginFormData> = async (data) => {
     const response = await signin(data).unwrap();
-    dispatch(setCredentials({access: response.access}));
+    dispatch(setCredentials({access: response}));
     const userData = await getUserData().unwrap();
     dispatch(setUserData({usertag: userData.usertag, username: userData.username}));
     navigate('/');
